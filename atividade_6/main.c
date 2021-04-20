@@ -19,10 +19,13 @@ int main(){
 
     sort(vetor,n-1);
 
+
+    printf("Vetor ordenado:");
     while(i<n){
-        printf("%d\n",vetor[i]);
+        printf("%d ",vetor[i]);
         i++;
     }
+    printf("\n");
 
     return 0;
 }

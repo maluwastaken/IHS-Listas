@@ -1,6 +1,12 @@
+SECTION .data
+    size dd 0
+    v_atual dd 0
+    temp dd 0
+    temp2 dd 0
+
+
 SECTION .text
     GLOBAL sort
-
 
 sort:
     enter 0,0
@@ -9,55 +15,53 @@ sort:
     mov eax,0
     mov ecx,[ebp+8] ;endereço do vetor
     mov edx,[ebp+12] ;tamanho do vetor
-    add edx,ecx
-
-    mov eax,dword[ecx]
-    push eax
-    mov dword[ecx],1000
-    mov ebx,0
-    call maior
-
+    
+    mov dword[size],edx
+    mov ebx, dword[temp]        ;pega o valor inicial de ebx que é 0
+    call sortaux
 
     pop ebx
     leave
     ret
 
 
-maior: ;posicao atual do vetor {ecx}, e coloca o maior valor na pilha
-    cmp ecx,edx
-    je .finish
-    cmp ebx,dword[ebp+12]
-    je .finish2
+sortaux: ;insertion sort
+    mov eax,dword[ecx+4*ebx]
+    mov dword[v_atual],eax            ;assume o valor como a primeira posição 
 
-    pop eax
-    cmp eax,dword[ecx+4*ebx]
-    jle .troca
 
-    push eax
+    cmp ebx,dword[size]              ;compara se ebx é igual ao tamanho do vetor se sim, o loop externo acabou
+    jge .finish2
 
-    inc ebx
-    jmp maior
+    .loop:
+        cmp ebx,dword[size]         ;compara se ebx é igual ao tamanho do vetor se sim, o loop interno acabou
+        jge .finish1
+    
+        inc ebx                     ;incrementa ebx para pegar o proximo valor do vetor
+        mov edx,dword[ecx+4*ebx]    
+        cmp edx,dword[v_atual]      ;compara se o valor atual é maior ou igual ao proximo valor, se não for continua o loop
+        jge .loop
 
-    .troca:
-    push dword[ecx+4*ebx]
-    mov dword[ecx+4*ebx],eax
-    inc ebx
-    jmp maior
+        mov dword[v_atual],edx     ;se o proximo valor é um valor menor que o atual, trocamos o valor atual pelo proximo valor
+        mov dword[temp2],ebx        ;salvamos a posição do menor valor no vetor
 
+        jmp .loop
+
+    .finish1:
+
+        mov edx,dword[v_atual]             ;no final do primeiro loop, trocamos o valor da posição atual da posição i 
+        mov ebx,dword[temp]                ; com o valor da posição que contem o menor numero
+        xchg edx,dword[ecx+4*ebx]
+        mov ebx,dword[temp2]
+        mov dword[ecx+4*ebx],edx
+
+
+        inc dword[temp]                 ;acrescentamos o valor de i, resetamos o valor da posição do nemor valor
+        mov ebx,dword[temp]
+        mov dword[temp2],ebx
+        jmp sortaux
     .finish2:
-        inc ecx
-        mov ebx,0
-        jmp maior
-    .finish:
+                                        ;voltamos para a chamada da função
         ret
-        
-
-
-          
-
-
 
     
-    
-
- 
