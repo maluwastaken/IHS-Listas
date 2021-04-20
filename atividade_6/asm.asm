@@ -11,7 +11,9 @@ sort:
     mov edx,[ebp+12] ;tamanho do vetor
     add edx,ecx
 
-
+    mov eax,dword[ecx]
+    push eax
+    mov dword[ecx],1000
     mov ebx,0
     call maior
 
@@ -27,16 +29,18 @@ maior: ;posicao atual do vetor {ecx}, e coloca o maior valor na pilha
     cmp ebx,dword[ebp+12]
     je .finish2
 
-    mov eax,dword[ecx]
+    pop eax
     cmp eax,dword[ecx+4*ebx]
-    jge .troca
+    jle .troca
+
+    push eax
 
     inc ebx
     jmp maior
 
     .troca:
-    xchg  dword[ecx+4*ebx], eax
-    mov dword[ecx],eax
+    push dword[ecx+4*ebx]
+    mov dword[ecx+4*ebx],eax
     inc ebx
     jmp maior
 
