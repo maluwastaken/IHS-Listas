@@ -1,4 +1,4 @@
-obj-m += modulo.o
+obj-m += hello.o
 KVERSION = $(shell uname -r)
 
 all:
